@@ -35,7 +35,7 @@ export default {
   data() {
     return {
       isMounted: false,
-      modelSrc: '<%= BASE_URL %>assets/models/cube.glb',
+      modelSrc: '/assets/models/cube.glb',
       timer: null,
       deltaTime: 100,
       thetaArray: [],
