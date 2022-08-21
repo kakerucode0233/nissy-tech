@@ -3,7 +3,7 @@
     <h1>にっしーの技術ノート</h1>
     <router-link to="/model-viewer/heat-map-3d">
       <div class="link-box">
-        <img src="/assets/images/thumbnail-heat-map-3d.jpg" alt="thumbnail-heat-map-3d" width="250" height="250" class="link-box-img">
+        <img src="assets/images/thumbnail-heat-map-3d.jpg" alt="thumbnail-heat-map-3d" width="250" height="250" class="link-box-img">
         <div>
           <h2 class="link-box-title">グリグリを使った3Dヒートマップ</h2>
           <p class="link-box-text">
