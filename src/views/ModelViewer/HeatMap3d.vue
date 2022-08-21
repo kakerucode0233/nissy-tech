@@ -1,27 +1,51 @@
 <template>
-  <div class="heat-map-3d">
-    <h1 class="page-title">グリグリを使った3Dヒートマップ</h1>
+  <div>
     <section class="introduction">
-      <h2>技術紹介</h2>
+      <h1 class="page-title">グリグリを使った3Dヒートマップ</h1>
+      <h2 class="introduction-title">技術紹介</h2>
       <div class="introduction-top-wrapper">
-        <div>
+        <div class="introduction-top-inner">
           <model-viewer id="heat-map-3d-demo" v-if="isMounted" src="assets/models/cube.glb" camera-controls class="model-viewer">
           </model-viewer>
+          <p id="search-text" class="introduction-top-text" hidden>計測中..</p>
           <div class="introduction-btn-wrapper">
-            <button v-on:click="startMeasuremunt()" class="introduction-btn">計測を開始</button>
-            <button id="stop-btn" v-on:click="stopMeasuremunt()" class="introduction-btn">計測を終了</button>
+            <button id="start-btn" v-on:click="startMeasuremunt()" class="introduction-btn">計測を開始</button>
+            <button id="stop-btn" v-on:click="stopMeasuremunt()" class="introduction-btn" disabled>計測を終了</button>
           </div>
         </div>
-        <ul class="introduction-score-list">
-          <li v-for="score in scores" :key="score.key" :class="`introduction-score-itme-${score.key}`">
-            <component :is="'style'">
-              .introduction-score-itme-{{score.key}}{
-                color: rgb({{score.color[0]}},{{score.color[1]}},{{score.color[2]}});
-              }
-            </component>
-            {{score.name}}：{{score.value}} %
-          </li>
-        </ul>
+        <div>
+          <img src="assets/images/color-bar.png" alt="color-bar" width="30" height="400">
+        </div>
+        <div class="introduction-score-wrapper">
+          <h3>ユーザーが閲覧した割合</h3>
+          <ul class="introduction-score-list">
+            <li v-for="score in scores" :key="score.key" :class="`introduction-score-itme-${score.key}`">
+              <component :is="'style'">
+                .introduction-score-itme-{{score.key}}{
+                  color: rgb({{score.color[0]}},{{score.color[1]}},{{score.color[2]}});
+                }
+              </component>
+              {{score.name}}：{{score.value}} %
+            </li>
+          </ul>
+          <div>
+            <h3>操作説明</h3>
+            <ul class="introduction-detail-list">
+              <li>
+                計測を開始ボタンを押す
+              </li>
+              <li>
+                好きなだけキューブをグリグリする
+              </li>
+              <li>
+                計測を終了ボタンを押す
+              </li>
+              <li>
+                キューブの面に、その面を見た時間の長さに応じたヒートマップが生成される
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
 
     </section>
@@ -35,7 +59,6 @@ export default {
   data() {
     return {
       isMounted: false,
-      // modelSrc: '/assets/models/cube.glb',
       timer: null,
       deltaTime: 100,
       thetaArray: [],
@@ -82,9 +105,16 @@ export default {
   },
   methods:{
     startMeasuremunt(){
+      document.getElementById("start-btn").disabled = true;
+      document.getElementById("stop-btn").disabled = false;
+      document.getElementById("search-text").hidden = false;
+      this.resetMaterialColor();
       this.timer = window.setInterval(()=>{this.getCameraLocation()}, 100);
     },
     stopMeasuremunt(){
+      document.getElementById("start-btn").disabled = false;
+      document.getElementById("stop-btn").disabled = true;
+      document.getElementById("search-text").hidden = true;
       clearInterval(this.timer);
       this.time = null;
       this.scores[0].value = this.calculateFrontScore();
@@ -103,21 +133,29 @@ export default {
       
       const rawTheta = modelviewer01.getCameraOrbit().theta;
       const rawPhi = modelviewer01.getCameraOrbit().phi;
-      const theta = this.convertAngle(rawTheta);
-      const phi = this.convertAngle(rawPhi);
+      const theta = this.convertTheta(rawTheta);
+      const phi = this.convertPhi(rawPhi);
 
       this.thetaArray.push(theta)
       this.phiArray.push(phi)
     },
-    convertAngle(rawAngle){
-      let angle = Math.abs(rawAngle/Math.PI);
-      angle = 2 * (angle/2 - Math.floor(angle/2));
-      if(angle>1){
-        angle = angle - 2;
+    convertTheta(rawTheta){
+      let theta = 2 - 2 * (rawTheta/Math.PI/2 - Math.floor(rawTheta/Math.PI/2));
+      if(theta>1){
+        theta -= 2;
       }
-      angle = Math.floor(100 * angle) / 100;
+      theta = Math.floor(100 * theta) / 100;
 
-      return angle;
+      return theta;
+    },
+    convertPhi(rawPhi){
+      let phi = 2 * (rawPhi/Math.PI/2 - Math.floor(rawPhi/Math.PI/2));
+      if(phi>1){
+        phi -= 2;
+      }
+      phi = Math.floor(100 * phi) / 100;
+
+      return phi;
     },
     calculateFrontScore(){
       let frontScore = 0;
@@ -187,7 +225,6 @@ export default {
           phiLeftScore = Math.sin(this.phiArray[i]*Math.PI);
         }
         leftScore += thetaLeftScore * phiLeftScore;
-        console.log(this.thetaArray[i]);
       }
       leftScore /= this.thetaArray.length;
 
@@ -241,6 +278,13 @@ export default {
         flontMaterial.pbrMetallicRoughness.setBaseColorFactor([this.scores[i].color[0]/255,this.scores[i].color[1]/255,this.scores[i].color[2]/255]);
       }
     },
+    resetMaterialColor(){
+      const modelviewer01 = document.querySelector('model-viewer#heat-map-3d-demo');
+      for(let i=0; i<modelviewer01.model.materials.length; i++){
+        const flontMaterial = modelviewer01.model.materials[i];
+        flontMaterial.pbrMetallicRoughness.setBaseColorFactor([0.5, 0.5, 0.5]);
+      }
+    },
     NormalizeScore(){
       let TotalScore = 0;
       for(let i = 0; i < this.scores.length; i++){
@@ -264,14 +308,26 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@keyframes text-scale-loop{
+  0%{
+    font-size: 1.2rem;
+  }
+  50%{
+    font-size: 1.6rem;
+  }
+  100%{
+    font-size: 1.2rem;
+  }
+}
+
 %container{
-  width: 1284px;
-  margin: 0 auto;
+  width: 1000px;
+  margin-left: 350px;
+  border-left: 1px solid #555;
 }
 
 .page-title{
-  @extend %container;
-  padding: 0 40px;
+  font-size: 2rem;
 }
 
 // 技術紹介
@@ -280,9 +336,25 @@ export default {
   padding: 0 40px;
 }
 
+.introduction-title{
+  margin-bottom: 30px;
+}
+
 .introduction-top-wrapper{
   display: flex;
   column-gap: 80px;
+}
+
+.introduction-top-inner{
+  position: relative;
+}
+
+.introduction-top-text{
+  position: absolute;
+  top: 20px;
+  left: 160px;
+  animation: text-scale-loop 1.5s linear infinite;
+  font-weight: 800;
 }
 
 .model-viewer{
@@ -293,7 +365,6 @@ export default {
 }
 
 .introduction-btn-wrapper{
-  width: 400px;
   padding: 20px 0;
   border: 1px solid #000;
   border-radius: 20px;
@@ -310,9 +381,19 @@ export default {
 
 .introduction-score-list{
   display: flex;
+  justify-content: left;
+  flex-direction: column;
+  row-gap: 5px;
+  font-size: 1.4rem;
+  list-style: none;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #777;
+}
+
+.introduction-detail-list{
+  display: flex;
   flex-direction: column;
   row-gap: 10px;
-  font-size: 1.4rem;
-  text-align: left;
+  padding-left: 10px;
 }
 </style>

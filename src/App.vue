@@ -1,7 +1,7 @@
 <template>
-  <div id="app" class="home-nav">
-    <nav>
-      <router-link to="/">ホーム</router-link> |
+  <div id="app" class="home-nav-wrapper">
+    <nav class="home-nav">
+      <router-link to="/">ホーム</router-link>
       <router-link to="/model-viewer/heat-map-3d">グリグリを使った3Dヒートマップ</router-link>
     </nav>
     <router-view/>
@@ -23,7 +23,8 @@
 }
 
 nav {
-  padding: 30px;
+  padding: 30px 20px 0 0;
+  font-size: 1.2rem;
 
   a {
     font-weight: bold;
@@ -41,20 +42,28 @@ h2,h3,p {
   margin-block-end: 0;
 }
 ul {
-  list-style-type: none;
-  padding: 0;
+  list-style: disc;
+  padding-left: 0;
 }
 li {
-  display: inline-block;
   margin: 0 10px;
+  text-align: left;
 }
 a {
   color: #000;
   text-decoration: none;
 }
 
-.home-nav{
+.home-nav-wrapper{
   @extend %container;
   padding: 0 40px;
+}
+
+.home-nav{
+  position: fixed;
+  display: flex;
+  flex-direction: column;
+  row-gap: 20px;
+  text-align: left;
 }
 </style>
