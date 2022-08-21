@@ -3,6 +3,5 @@ module.exports = defineConfig({
   transpileDependencies: true,
   outputDir: 'docs',
   assetsDir: './',
-  // publicPath: '/'
-  publicPath: '/github-pages-example-with-vue-router',
+  publicPath: './'
 })
