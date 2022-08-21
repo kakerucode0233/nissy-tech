@@ -5,7 +5,7 @@
       <h2>技術紹介</h2>
       <div class="introduction-top-wrapper">
         <div>
-          <model-viewer id="heat-map-3d-demo" v-if="isMounted" :src="modelSrc" camera-controls class="model-viewer">
+          <model-viewer id="heat-map-3d-demo" v-if="isMounted" src="<%= BASE_URL %>assets/models/cube.glb" camera-controls class="model-viewer">
           </model-viewer>
           <div class="introduction-btn-wrapper">
             <button v-on:click="startMeasuremunt()" class="introduction-btn">計測を開始</button>
@@ -35,7 +35,7 @@ export default {
   data() {
     return {
       isMounted: false,
-      modelSrc: '/assets/models/cube.glb',
+      // modelSrc: '/assets/models/cube.glb',
       timer: null,
       deltaTime: 100,
       thetaArray: [],
