@@ -2,6 +2,7 @@
   <div id="app" class="home-nav-wrapper">
     <nav class="home-nav">
       <router-link to="/">ホーム</router-link>
+      <router-link to="/model-viewer/demo">3D家具グリグリ</router-link>
       <router-link to="/model-viewer/heat-map-3d">グリグリを使った3Dヒートマップ</router-link>
     </nav>
     <router-view/>
@@ -36,10 +37,11 @@ nav {
   }
 }
 
-h2,h3,p {
+h2,h3,h4,p {
   text-align: left; 
   margin-block-start: 0;
   margin-block-end: 0;
+  white-space: pre ;
 }
 ul {
   list-style: disc;

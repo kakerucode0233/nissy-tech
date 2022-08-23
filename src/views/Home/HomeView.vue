@@ -1,26 +1,46 @@
 <template>
   <div class="home">
     <h1>にっしーの技術ノート</h1>
-    <router-link to="/model-viewer/heat-map-3d">
-      <div class="link-box">
-        <img src="assets/images/thumbnail-heat-map-3d.jpg" alt="thumbnail-heat-map-3d" width="250" height="250" class="link-box-img">
-        <div>
-          <h2 class="link-box-title">グリグリを使った3Dヒートマップ</h2>
-          <p class="link-box-text">
-            お客さんが家具のどこを注目しているか分析するための技術を紹介！
-            <br>
-            商品開発の助けになるかも？
-          </p>
-        </div>
-      </div>
-    </router-link>
+    <ul class="page-box-list">
+      <li v-for="page in pages" :key="`page-${page.key}`">
+        <router-link :to="page.to">
+          <div class="page-box">
+            <img :src="page.thumbnail" :alt="page.key" width="250" height="250" class="page-box-img">
+            <div>
+              <h2 class="page-box-title">{{page.title}}</h2>
+              <p class="page-box-text">{{page.detail}}</p>
+            </div>
+          </div>
+        </router-link>
+      </li>
+    </ul>
   </div>
 </template>
 
 <script>
 
 export default {
-  name: 'HomeView'
+  name: 'HomeView',
+  data() {
+    return {
+      pages:[
+        {
+          key: 'model-viewer-demo',
+          to: '/model-viewer/demo',
+          thumbnail: 'assets/images/thumbnail-heat-map-3d.jpg',
+          title: '3D家具グリグリ',
+          detail: 'お客さんが家具を360度自由に見られる技術を紹介！\n購買意欲を搔き立てること間違いなし！',
+        },
+        {
+          key: 'heat-map-3d',
+          to: '/model-viewer/heat-map-3d',
+          thumbnail: 'assets/images/thumbnail-heat-map-3d.jpg',
+          title: 'グリグリを使った3Dヒートマップ',
+          detail: 'お客さんが家具のどこを注目しているか分析するための技術を紹介！\n商品開発の助けになるかも？',
+        }
+      ]
+    }
+  }
 }
 </script>
 
@@ -37,7 +57,14 @@ export default {
   padding-left: 40px;
 }
 
-.link-box {
+.page-box-list{
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  row-gap: 40px;
+}
+
+.page-box {
   display: flex;
   column-gap: 40px;
   border: 2px solid #42b983;
@@ -50,13 +77,13 @@ export default {
   }
 }
 
-.link-box-img{
+.page-box-img{
   display: block;
   width: 250px;
   height: 250px;
 }
 
-.link-box-title{
+.page-box-title{
   margin: 20px 0;
 }
 </style>
