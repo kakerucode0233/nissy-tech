@@ -27,7 +27,7 @@ export default {
         {
           key: 'model-viewer-demo',
           to: '/model-viewer/demo',
-          thumbnail: 'assets/images/thumbnail-heat-map-3d.jpg',
+          thumbnail: 'assets/images/thumbnail-model-viewer.jpg',
           title: '3D家具グリグリ',
           detail: 'お客さんが家具を360度自由に見られる技術を紹介！\n購買意欲を搔き立てること間違いなし！',
         },
