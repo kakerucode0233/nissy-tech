@@ -11,7 +11,7 @@
 
 <style lang="scss">
 %container{
-  width: 1284px;
+  width: 1400px;
   margin: 0 auto;
 }
 
@@ -59,10 +59,11 @@ a {
 .home-nav-wrapper{
   @extend %container;
   padding: 0 40px;
+  display: flex;
 }
 
 .home-nav{
-  position: fixed;
+  // position: fixed;
   display: flex;
   flex-direction: column;
   row-gap: 20px;

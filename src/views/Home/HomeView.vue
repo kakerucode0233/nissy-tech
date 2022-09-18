@@ -46,8 +46,7 @@ export default {
 
 <style lang="scss">
 %container{
-  width: 1000px;
-  margin-left: 350px;
+  width: 940px;
   border-left: 1px solid #555;
 }
 

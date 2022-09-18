@@ -321,8 +321,7 @@ export default {
 }
 
 %container{
-  width: 1000px;
-  margin-left: 350px;
+  width: 940px;
   border-left: 1px solid #555;
 }
 
@@ -333,7 +332,7 @@ export default {
 // 技術紹介
 .introduction{
   @extend %container;
-  padding: 0 40px;
+  padding-left: 40px;
 }
 
 .introduction-title{

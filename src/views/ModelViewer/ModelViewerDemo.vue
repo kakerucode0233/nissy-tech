@@ -6,10 +6,12 @@
       <div class="introduction-top-wrapper">
         <model-viewer 
           v-if="isMounted" 
-          id="heat-map-3d-demo" 
+          id="furniture-demo" 
           src="assets/models/model.glb" 
           camera-controls 
           enable-pan
+          exposure = 0.7
+          touch-action = none
           class="model-viewer">
         </model-viewer>
         <div>
@@ -41,17 +43,18 @@
       <div class="introduction-top-wrapper">
         <model-viewer 
           v-if="isMounted" 
-          id="heat-map-3d-demo" 
+          id="room-demo"
           src="assets/models/room1.glb" 
           camera-controls 
           enable-pan
+          exposure = 0.7
+          touch-action = none
           camera-target="0.7m 1m -0.5m"
           camera-orbit="60deg 70deg 90%"
           class="model-viewer">
         </model-viewer>
         <div>
-          <h3 class="introduction-detail-title">説明</h3>
-          <h4>部屋を丸ごと表示することも可能！</h4>
+          <h3 class="introduction-detail-title">部屋を丸ごと表示することも可能！</h3>
           <ul class="introduction-detail-text">
             <li>
               コーディネートを丸ごと3Dにしてお部屋を覗くことも
@@ -61,31 +64,81 @@
       </div>
 
       <div class="introduction-top-wrapper">
+        <model-viewer 
+          v-if="isMounted" 
+          id="turn-table-demo"
+          src="assets/models/model.glb"
+          auto-rotate
+          exposure = 0.7
+          :rotation-per-second = "rotateSpeed * Math.PI + 'rad'"
+          class="model-viewer">
+          <div class="model-viewer-rotation-range-bar">
+            <p class="range-bar-text">回転速度: {{rotateSpeed}}</p>
+            <input type="range" id="rotation-speed-bar" min="-1.2" max="1.2" step="0.01"/>
+          </div>
+        </model-viewer>
+        <div>
+          <h3 class="introduction-detail-title">ターンテーブル</h3>
+          <ul class="introduction-detail-text">
+            <li>
+              回転・拡縮・移動など永続的な動きを加えられる
+            </li>
+            <li>
+              この動きはglbファイル内に埋め込まなくとも、model viewer側で設定可能
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="introduction-top-wrapper">
+        <model-viewer 
+          v-if="isMounted" 
+          id="exposure-demo"
+          src="assets/models/model.glb"
+          camera-controls 
+          enable-pan
+          touch-action = none
+          :exposure = "exposure"
+          class="model-viewer">
+          <div class="model-viewer-rotation-range-bar">
+            <p class="range-bar-text">光の強さ(露出):{{exposure}}</p>
+            <input type="range" id="exposure-bar" min="0" max="1" step="0.01" value="0.7"/>
+          </div>
+        </model-viewer>
+        <div>
+          <h3 class="introduction-detail-title">光の強さ(露出)</h3>
+          <ul class="introduction-detail-text">
+            <li>
+              家具に当たる光の強さを調整することができる
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="introduction-top-wrapper">
         <model-viewer
           v-if="isMounted"
-          id="annotation-demo-01" 
-          src="assets/models/cupboard01.glb" 
+          id="annotation-demo-01"
+          src="assets/models/3HWFL_LXMS8V.glb"
           camera-controls
           enable-pan
-          shadow-intensity="1"
-          shadow-softness = 0
-          camera-target="0m 1m 0m"
-          camera-orbit="0deg 90deg 10%"
+          touch-action = none
+          exposure = 0.7
+          camera-orbit="0deg 90deg"
           class="model-viewer">
 
           <!-- 注釈 -->
-          <button slot="hotspot-point1" data-position="0.3m 1m 0.3m" data-normal="0 0 1">
-            <div class="annotation1">ポイント１</div>
+          <button slot="hotspot-point1" data-position="0.38m 0.15m -0.18m" data-normal="0 0 -1" data-orbit="150deg 60deg 50%">
+            <span class="annotation1">コードリール付き！</span>
           </button>
     
-          <button slot="hotspot-point2" data-position="-0.3m 0.3m 0.3m" data-normal="0 0 1">
-            <div class="annotation2">ポイント２</div>
+          <button slot="hotspot-point2" data-position="0m 0.4m 0.2m" data-normal="0 0 1" data-orbit="0deg 90deg">
+            <span class="annotation2">中までテラゾー柄！</span>
           </button>
 
         </model-viewer>
         <div>
-          <h3 class="introduction-detail-title">説明</h3>
-          <h4>注釈追加</h4>
+          <h3 class="introduction-detail-title">注釈追加</h3>
           <ul class="introduction-detail-text">
             <li>
               3Dモデル上に注釈を追加でき、家具を回転させると注釈が隠れる
@@ -98,37 +151,30 @@
         <model-viewer
           v-if="isMounted"
           id="animation-demo-01" 
-          src="assets/models/cupboard01.glb" 
+          src="assets/models/3HWFL_LXMS8V.glb" 
           camera-controls
           enable-pan
-          shadow-intensity="1"
-          shadow-softness = 0
-          camera-target="0m 1m 0m"
-          camera-orbit="0deg 90deg 10%"
+          touch-action = none
+          exposure = 0.7
+          camera-target="0m 0.5m 0m"
+          camera-orbit="0deg 90deg 100%"
+          animation-crossfade-duration = 0
           class="model-viewer">
-          <p id="animation-demo-text">アニメーション：停止中</p>
         </model-viewer>
         <div>
-          <h3 class="introduction-detail-title">説明</h3>
-          <h4>様々なアニメーションを追加可能</h4>
+          <h3 class="introduction-detail-title">様々なアニメーションを追加可能</h3>
           <ul class="introduction-button-list">
             <li>
-              <button v-on:click="playAnimation('body_move')" class="animation-play-btn">移動</button>
+              <button v-on:click="playAnimation(0)" :id="`animation-play-btn-${0}`" class="animation-play-btn">中央ドアを開く</button>
             </li>
             <li>
-              <button v-on:click="playAnimation('body_rotation')" class="animation-play-btn">回転</button>
+              <button v-on:click="playAnimation(1)" :id="`animation-play-btn-${1}`" class="animation-play-btn">左ドアを開く</button>
             </li>
             <li>
-              <button v-on:click="playAnimation('body_scale')" class="animation-play-btn">拡縮</button>
+              <button v-on:click="playAnimation(2)" :id="`animation-play-btn-${2}`" class="animation-play-btn">右ドアを開く</button>
             </li>
             <li>
-              <button v-on:click="playAnimation('left_door_open')" class="animation-play-btn">左ドアの開閉</button>
-            </li>
-            <li>
-              <button v-on:click="playAnimation('rigth_door_open')" class="animation-play-btn">右ドアの開閉</button>
-            </li>
-            <li>
-              <button v-on:click="stopAnimation()" class="animation-pause-btn">停止</button>
+              <button v-on:click="resetAnimation()" class="animation-reset-btn">ドアを閉じる</button>
             </li>
           </ul>
         </div>
@@ -141,17 +187,16 @@
           src="assets/models/cupboard02.glb" 
           camera-controls
           enable-pan
-          shadow-intensity="1"
-          shadow-softness = 0
+          exposure = 0.7
+          touch-action = none
           camera-target="0m 1m 0m"
           camera-orbit="30deg 80deg 10%"
           autoplay
           class="model-viewer">
         </model-viewer>
         <div>
-          <h3 class="introduction-detail-title">説明</h3>
-          <h4>家具の利用方法もアニメーションに</h4>
-          <ul class="introduction-button-list">
+          <h3 class="introduction-detail-title">家具の利用方法もアニメーションに</h3>
+          <ul class="introduction-detail-text">
             <li>
               機能性を推したい家具では、アニメーションを使うことでその用途を効果的に説明可能
             </li>
@@ -169,24 +214,78 @@ export default {
   data() {
     return {
       isMounted: false,
+      rotateSpeed: 1,
+      exposure: 0.7,
     }
   },
   methods:{
-    playAnimation(animationName){
-      const animationDemo01 = document.querySelector("model-viewer#animation-demo-01");
-      animationDemo01.animationName = animationName;
-      animationDemo01.play();
-      document.getElementById('animation-demo-text').textContent = 'アニメーション：再生中';
+    async setIsMounted(){
+      this.isMounted = true;
     },
-    stopAnimation(){
+    setRotationSpeed(speed){
+      this.rotateSpeed = speed;
+    },
+    setExposure(exposure){
+      this.exposure = exposure;
+    },
+    async hotspotSettings(){
+      const annotationDemo01 = document.querySelector("model-viewer#annotation-demo-01");
+      const annotationClicked = (annotation) => {
+        let dataset = annotation.dataset;
+        annotationDemo01.cameraTarget = dataset.position;
+        annotationDemo01.cameraOrbit = dataset.orbit;
+        annotationDemo01.fieldOfView = '45deg';
+      }
+      annotationDemo01.querySelectorAll('button').forEach((hotspot) => {
+        hotspot.addEventListener('click', () => annotationClicked(hotspot));
+      });
+    },
+    playAnimation(animationId){
+      for(let i=0; i<3; i++){
+        this.disableBtnById('animation-play-btn-' + i);
+      }
+      this.resetAnimation();
+
       const animationDemo01 = document.querySelector("model-viewer#animation-demo-01");
-      animationDemo01.pause();
-      document.getElementById('animation-demo-text').textContent = 'アニメーション：停止中';
-    }
+      const animationPauseTime = animationDemo01.duration * 1000/2;
+
+      animationDemo01.animationName = animationDemo01.availableAnimations[animationId];
+      animationDemo01.play();
+      setTimeout(() => {
+        animationDemo01.pause();
+        for(let i=0; i<3; i++){
+          this.enableBtnById('animation-play-btn-' + i);
+        }
+      }, animationPauseTime);
+    },
+    resetAnimation(){
+      const animationDemo01 = document.querySelector("model-viewer#animation-demo-01");
+      animationDemo01.currentTime = 0;
+    },
+    disableBtnById(btnId){
+      document.getElementById(btnId).disabled = true;
+    },
+    enableBtnById(btnId){
+      document.getElementById(btnId).disabled = false;
+    },
   },
-  mounted() {
-    this.isMounted = true;
-    this.loadComponent();
+  async mounted() {
+    await this.loadComponent();
+    await this.setIsMounted();
+    window.onload = () => {
+      const rotateSpeedInputElem = document.getElementById('rotation-speed-bar');
+      const exposureInputElem = document.getElementById('exposure-bar');
+
+      rotateSpeedInputElem.addEventListener('input', (event) =>{
+        this.setRotationSpeed(event.target.value);
+      });
+      exposureInputElem.addEventListener('input', (event) =>{
+        this.setExposure(event.target.value);
+      });
+    }
+    await this.hotspotSettings();
+  },
+  created(){
   },
   computed: {
     loadComponent() {
@@ -198,8 +297,7 @@ export default {
 
 <style lang="scss" scoped>
 %container{
-  width: 1000px;
-  margin-left: 350px;
+  width: 940px;
   border-left: 1px solid #555;
 }
 
@@ -210,7 +308,7 @@ export default {
 // 技術紹介
 .introduction{
   @extend %container;
-  padding: 0 40px;
+  padding-left: 40px;
 }
 
 .introduction-title{
@@ -226,10 +324,21 @@ export default {
 }
 
 .model-viewer{
+  position: relative;
   width: 400px;
   height: 400px;
   border: 1px solid #eee;
   margin-bottom: 20px;
+}
+
+.range-bar-text{
+  width: 135px;
+}
+
+.model-viewer-rotation-range-bar{
+  position: absolute;
+  bottom: 5px;
+  right: 10px;
 }
 
 .introduction-detail-title{
@@ -245,9 +354,9 @@ export default {
 
 button[slot="hotspot-point1"]{
   display: block;
-  width: 10px;
-  height: 10px;
-  border-radius: 10px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
   border: none;
   background-color: red;
   box-sizing: border-box;
@@ -256,9 +365,9 @@ button[slot="hotspot-point1"]{
 
 button[slot="hotspot-point2"]{
   display: block;
-  width: 10px;
-  height: 10px;
-  border-radius: 10px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
   border: none;
   background-color: blue;
   box-sizing: border-box;
@@ -266,7 +375,8 @@ button[slot="hotspot-point2"]{
 }
 
 .annotation1{
-  width: 120px;
+  display: block;
+  width: 150px;
   background-color: #888888;
   color: #fff;
   font-size: 1rem;
@@ -278,7 +388,7 @@ button[slot="hotspot-point2"]{
 }
 
 .annotation2{
-  width: 120px;
+  width: 150px;
   background-color: burlywood;
   color: #000;
   font-size: 1rem;
@@ -313,7 +423,7 @@ button[slot="hotspot-point2"]{
   }
 }
 
-.animation-pause-btn{
+.animation-reset-btn{
   font-size: 1.4rem;
   font-weight: 500;
   padding: 5px 20px;
