@@ -247,10 +247,10 @@ export default {
       this.resetAnimation();
 
       const animationDemo01 = document.querySelector("model-viewer#animation-demo-01");
-      const animationPauseTime = animationDemo01.duration * 1000/2;
-
       animationDemo01.animationName = animationDemo01.availableAnimations[animationId];
+      
       animationDemo01.play();
+      const animationPauseTime = animationDemo01.duration * 1000/2;
       setTimeout(() => {
         animationDemo01.pause();
         for(let i=0; i<3; i++){
