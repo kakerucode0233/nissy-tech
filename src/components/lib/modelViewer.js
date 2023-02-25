@@ -1,0 +1,1 @@
+export const loadModelViewer = () => import('@google/model-viewer');
