@@ -10,7 +10,12 @@
       class="model-viewer">
       <button v-for="(endPoint, index) in endPoints" :key="`end-point${index}`" :slot="`hotspot-end-point${endPoint.slot}`" class="end-point" :data-normal="endPoint.dataNormal" :style="`display: ${annotationVisibility ? 'block':'none'}`"></button>
       <button v-for="(sizePanel, index) in sizePanels" :key="`size-panel${index}`" :slot="`hotspot-size-panel${sizePanel.slot}`" class="size-panel" :data-normal="sizePanel.dataNormal" :style="`display: ${annotationVisibility ? 'block':'none'}`"></button>
-
+      <div class="toggle-button-wrapper">
+        <div class="toggle-button">
+          <input v-model="annotationVisibility" class="toggle-input" type='checkbox' />
+          <label for="toggle" :class="annotationVisibility ? 'toggle-label-visible' : 'toggle-label-hidden'"/>
+        </div>
+      </div>
     </model-viewer>
     <div>
       <h3 class="introduction-detail-title">操作説明</h3>
@@ -180,7 +185,7 @@ export default {
 }
 </script>
 
-<style>
+<style lang="scss" scoped>
 .introduction-top-wrapper{
   display: flex;
   column-gap: 80px;
@@ -245,5 +250,62 @@ export default {
   .size-panel{
     font-size: 3vw;
   }
+}
+
+.toggle-button-wrapper{
+  position: absolute;
+  top: 12px;
+  right: 20px;
+}
+
+.toggle-button {
+  position: relative;
+  width: 50px;
+  height: 20px;
+  margin: auto;
+}
+
+.toggle-input {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 5;
+  opacity: 0;
+  cursor: pointer;
+}
+
+@mixin toggle-label($BackGroundColor: #ccc, $ButtonLeftPosition: 0px) {
+  width: 50px;
+  height: 20px;
+  background: $BackGroundColor;
+  position: relative;
+  display: inline-block;
+  border-radius: 40px;
+  transition: 0.4s;
+  box-sizing: border-box;
+
+  &::after{
+    content: "";
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    border-radius: 100%;
+    left: $ButtonLeftPosition;
+    top: 0;
+    z-index: 2;
+    background: #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    transition: 0.4s;
+  }
+}
+
+.toggle-label-hidden{
+  @include toggle-label(#ccc, 0px);
+}
+
+.toggle-label-visible{
+  @include toggle-label(#4BD865, 40px);
 }
 </style>
