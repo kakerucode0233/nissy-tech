@@ -2,7 +2,7 @@
   <div class="introduction-top-wrapper">
     <model-viewer
       id="size-view-demo" 
-      src="assets/models/model.glb" 
+      :src="selectedModel" 
       camera-controls 
       enable-pan
       exposure = 0.7
@@ -15,6 +15,14 @@
           <input v-model="annotationVisibility" class="toggle-input" type='checkbox' />
           <label for="toggle" :class="annotationVisibility ? 'toggle-label-visible' : 'toggle-label-hidden'"/>
         </div>
+      </div>
+      <div class="pulldown-wrapper">
+        <select v-model="selectedModel">
+          <option disabled value="">3Dモデル</option>
+          <option v-for="model in models" :key="model.id" :value="model.name">
+            {{ model.name }}
+          </option>
+        </select>
       </div>
     </model-viewer>
     <div>
@@ -41,6 +49,21 @@ export default {
   name: 'sizeViewDemo',
   data(){
     return {
+      models:[
+        {
+          id: 0,
+          name: 'assets/models/model.glb',
+        },
+        {
+          id: 1,
+          name: 'assets/models/model2.glb',
+        },
+        {
+          id: 2,
+          name: 'assets/models/model3.glb',
+        },
+      ],
+      selectedModel: 'assets/models/model.glb',
       modelViewerObj: null,
       annotationVisibility: false,
       endPoints: [
@@ -93,10 +116,11 @@ export default {
       ],
     }
   },
-  computed: {
-    modelSize(){
-      return this.modelViewerObj.getDimensions();
-    },
+
+  watch:{
+    selectedModel(){
+      this.updateModelViewer();
+    }
   },
   async mounted() {
     await loadModelViewer();
@@ -115,16 +139,20 @@ export default {
         }
       })
     },
+    updateModelViewer(){
+      this.updateSizeHotspot(this.modelViewerObj);
+    },
     updateSizeHotspot(modelViewer){
-      const halfSizeX = this.modelSize.x / 2;
-      const halfSizeY = this.modelSize.y / 2;
-      const halfSizeZ = this.modelSize.z / 2;
+      const modelSize = modelViewer.getDimensions();
+      const halfSizeX = modelSize.x / 2;
+      const halfSizeY = modelSize.y / 2;
+      const halfSizeZ = modelSize.z / 2;
 
-      modelViewer.querySelector('button[slot="hotspot-size-panel+X-Y"]').textContent = `${(this.modelSize.z * 100).toFixed(0)} cm`;
-      modelViewer.querySelector('button[slot="hotspot-size-panel+X-Z"]').textContent = `${(this.modelSize.y * 100).toFixed(0)} cm`;
-      modelViewer.querySelector('button[slot="hotspot-size-panel+Y-Z"]').textContent = `${(this.modelSize.x * 100).toFixed(0)} cm`;
-      modelViewer.querySelector('button[slot="hotspot-size-panel-X-Z"]').textContent = `${(this.modelSize.y * 100).toFixed(0)} cm`;
-      modelViewer.querySelector('button[slot="hotspot-size-panel-X-Y"]').textContent = `${(this.modelSize.z * 100).toFixed(0)} cm`;
+      modelViewer.querySelector('button[slot="hotspot-size-panel+X-Y"]').textContent = `${(modelSize.z * 100).toFixed(0)} cm`;
+      modelViewer.querySelector('button[slot="hotspot-size-panel+X-Z"]').textContent = `${(modelSize.y * 100).toFixed(0)} cm`;
+      modelViewer.querySelector('button[slot="hotspot-size-panel+Y-Z"]').textContent = `${(modelSize.x * 100).toFixed(0)} cm`;
+      modelViewer.querySelector('button[slot="hotspot-size-panel-X-Z"]').textContent = `${(modelSize.y * 100).toFixed(0)} cm`;
+      modelViewer.querySelector('button[slot="hotspot-size-panel-X-Y"]').textContent = `${(modelSize.z * 100).toFixed(0)} cm`;
       
       modelViewer.updateHotspot({
         name: 'hotspot-end-point+X-Y+Z',
@@ -307,5 +335,11 @@ export default {
 
 .toggle-label-visible{
   @include toggle-label(#4BD865, 40px);
+}
+
+.pulldown-wrapper{
+  position: absolute;
+  bottom: 12px;
+  right: 20px;
 }
 </style>
