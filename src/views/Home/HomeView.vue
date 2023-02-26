@@ -6,7 +6,7 @@
         <router-link :to="page.to">
           <div class="page-box">
             <img :src="page.thumbnail" :alt="page.key" width="250" height="250" class="page-box-img">
-            <div>
+            <div class="page-box-detail">
               <h2 class="page-box-title">{{page.title}}</h2>
               <p class="page-box-text">{{page.detail}}</p>
             </div>
@@ -45,15 +45,8 @@ export default {
 </script>
 
 <style lang="scss">
-%container{
-  width: 940px;
-  border-left: 1px solid #555;
-}
-
-//main
 .home{
-  @extend %container;
-  padding-left: 40px;
+  width: 90vw;
 }
 
 .page-box-list{
@@ -65,10 +58,13 @@ export default {
 
 .page-box {
   display: flex;
-  column-gap: 40px;
+  justify-content: center;
+  width: 75vw;
+  flex-wrap: wrap;
+  column-gap: 5vw;
   border: 2px solid #42b983;
   border-radius: 12px;
-  padding: 20px 10px;
+  padding: 3vw 3vw;
   transition: .3s;
 
   &:hover{
@@ -78,11 +74,23 @@ export default {
 
 .page-box-img{
   display: block;
-  width: 250px;
-  height: 250px;
+  width: 20vw;
+  height: 20vw;
+  min-width: 270px;
+  min-height: 270px;
+}
+
+.page-box-detail{
+  width: 30vw;
+  min-width: 270px;
 }
 
 .page-box-title{
+  white-space: pre-line;
   margin: 20px 0;
+}
+
+.page-box-text{
+  white-space: pre-line;
 }
 </style>

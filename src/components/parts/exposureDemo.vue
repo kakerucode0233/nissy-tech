@@ -4,16 +4,19 @@
       id="exposure-demo"
       src="assets/models/model.glb"
       camera-controls 
-      enable-pan
+      camera-orbit="-30deg 60deg"
       touch-action = none
+      enable-pan
       :exposure = "exposure"
+      shadow-intensity="1"
+      shadow-softness = "0.5"
       class="model-viewer">
       <div class="model-viewer-rotation-range-bar">
         <p class="range-bar-text">光の強さ(露出):{{exposure}}</p>
         <input v-model="exposure" type="range" min="0" max="1" step="0.01" value="0.7"/>
       </div>
     </model-viewer>
-    <div>
+    <div class="introduction-detail">
       <h3 class="introduction-detail-title">光の強さ(露出)</h3>
       <ul class="introduction-detail-text">
         <li>
@@ -51,33 +54,6 @@ export default {
 </script>
 
 <style>
-.introduction-top-wrapper{
-  display: flex;
-  column-gap: 80px;
-  padding-bottom: 20px;
-  margin-bottom: 40px;
-  border-bottom: 10px solid #ddd;
-}
-
-.introduction-detail-title{
-  margin-bottom: 10px;
-}
-
-.introduction-detail-text{
-  width: 450px;
-  display: flex;
-  flex-direction: column;
-  row-gap: 10px;
-}
-
-.model-viewer{
-  position: relative;
-  width: 400px;
-  height: 400px;
-  border: 1px solid #eee;
-  margin-bottom: 20px;
-}
-
 .range-bar-text{
   width: 135px;
 }

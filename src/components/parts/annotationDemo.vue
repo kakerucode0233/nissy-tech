@@ -6,7 +6,10 @@
       camera-controls
       enable-pan
       touch-action = none
-      exposure = 0.7
+      camera-orbit="-30deg 60deg"
+      exposure = "0.7"
+      shadow-intensity="1"
+      shadow-softness = "0.5"
       class="model-viewer">
         <!-- 注釈 -->
         <button @click="annotations[0].detailOpen = !annotations[0].detailOpen" slot="hotspot-point1" data-position="0.38m 0.15m -0.18m" data-normal="0 0 -1" data-orbit="150deg 60deg 50%">
@@ -32,7 +35,7 @@
           </span>
         </button>
     </model-viewer>
-    <div>
+    <div class="introduction-detail">
       <h3 class="introduction-detail-title">注釈追加</h3>
       <ul class="introduction-detail-text">
         <li>
@@ -110,33 +113,6 @@ export default {
   100%{
     transform: scale(1, 1);
   }
-}
-
-.introduction-top-wrapper{
-  display: flex;
-  column-gap: 80px;
-  padding-bottom: 20px;
-  margin-bottom: 40px;
-  border-bottom: 10px solid #ddd;
-}
-
-.introduction-detail-title{
-  margin-bottom: 10px;
-}
-
-.introduction-detail-text{
-  width: 450px;
-  display: flex;
-  flex-direction: column;
-  row-gap: 10px;
-}
-
-.model-viewer{
-  position: relative;
-  width: 400px;
-  height: 400px;
-  border: 1px solid #eee;
-  margin-bottom: 20px;
 }
 
 .annotation1{

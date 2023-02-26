@@ -1,17 +1,17 @@
 <template>
-  <div id="app" class="home-nav-wrapper">
+  <div id="app" class="home-wrapper">
     <nav class="home-nav">
       <router-link to="/">ホーム</router-link>
-      <router-link to="/model-viewer/demo">3D家具グリグリ</router-link>
-      <router-link to="/model-viewer/heat-map-3d">グリグリを使った3Dヒートマップ</router-link>
+      <router-link to="/model-viewer/demo">グリグリ</router-link>
+      <router-link to="/model-viewer/heat-map-3d">ヒートマップ</router-link>
     </nav>
-    <router-view/>
+    <router-view class="contents"/>
   </div>
 </template>
 
 <style lang="scss">
 %container{
-  width: 1400px;
+  width: 100vw;
   margin: 0 auto;
 }
 
@@ -56,17 +56,21 @@ a {
   text-decoration: none;
 }
 
-.home-nav-wrapper{
+.home-wrapper{
   @extend %container;
-  padding: 0 40px;
-  display: flex;
 }
 
 .home-nav{
-  // position: fixed;
   display: flex;
-  flex-direction: column;
-  row-gap: 20px;
+  justify-content: center;
+  column-gap: 5vw;
+  padding: 2vw 0;
   text-align: left;
+  border-bottom: 2px solid #222;
+}
+
+.contents{
+  width: 90vw;
+  padding: 0 5vw;
 }
 </style>

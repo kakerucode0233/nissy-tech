@@ -6,7 +6,9 @@
       :src="selectedModel" 
       camera-controls 
       enable-pan
-      exposure = 0.7
+      exposure = "0.7"
+      shadow-intensity="1"
+      shadow-softness = "0.5"
       camera-orbit="-30deg 60deg"
       touch-action = none
       class="model-viewer">
@@ -27,7 +29,7 @@
         </select>
       </div>
     </model-viewer>
-    <div>
+    <div class="introduction-detail">
       <h3 class="introduction-detail-title">操作説明</h3>
       <ul class="introduction-detail-text">
         <li>
@@ -225,33 +227,6 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.introduction-top-wrapper{
-  display: flex;
-  column-gap: 80px;
-  padding-bottom: 20px;
-  margin-bottom: 40px;
-  border-bottom: 10px solid #ddd;
-}
-
-.introduction-detail-title{
-  margin-bottom: 10px;
-}
-
-.introduction-detail-text{
-  width: 450px;
-  display: flex;
-  flex-direction: column;
-  row-gap: 10px;
-}
-
-.model-viewer{
-  position: relative;
-  width: 400px;
-  height: 400px;
-  border: 1px solid #eee;
-  margin-bottom: 20px;
-}
-
 .end-point{
   display: block;
   width: 14px;

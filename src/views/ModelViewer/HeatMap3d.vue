@@ -5,16 +5,13 @@
       <h2 class="introduction-title">技術紹介</h2>
       <div class="introduction-top-wrapper">
         <div class="introduction-top-inner">
-          <model-viewer id="heat-map-3d-demo" v-if="isMounted" src="assets/models/cube.glb" camera-controls class="model-viewer">
+          <model-viewer id="heat-map-3d-demo" v-if="isMounted" src="assets/models/model.glb" camera-controls class="model-viewer">
           </model-viewer>
           <p id="search-text" class="introduction-top-text" hidden>計測中..</p>
           <div class="introduction-btn-wrapper">
             <button id="start-btn" v-on:click="startMeasuremunt()" class="introduction-btn">計測を開始</button>
             <button id="stop-btn" v-on:click="stopMeasuremunt()" class="introduction-btn" disabled>計測を終了</button>
           </div>
-        </div>
-        <div>
-          <img src="assets/images/color-bar.png" alt="color-bar" width="30" height="400">
         </div>
         <div class="introduction-score-wrapper">
           <h3>ユーザーが閲覧した割合</h3>
@@ -320,19 +317,12 @@ export default {
   }
 }
 
-%container{
-  width: 940px;
-  border-left: 1px solid #555;
-}
-
 .page-title{
   font-size: 2rem;
 }
 
 // 技術紹介
 .introduction{
-  @extend %container;
-  padding-left: 40px;
 }
 
 .introduction-title{
@@ -341,7 +331,11 @@ export default {
 
 .introduction-top-wrapper{
   display: flex;
-  column-gap: 80px;
+  flex-wrap: wrap;
+  column-gap: 5vw;
+  padding-bottom: 20px;
+  margin-bottom: 40px;
+  border-bottom: 10px solid #ddd;
 }
 
 .introduction-top-inner{
@@ -357,9 +351,16 @@ export default {
 }
 
 .model-viewer{
-  width: 400px;
-  height: 400px;
+  position: relative;
+  width: 40vw;
+  height: 35vw;
+  max-width: 600px;
+  min-width: 300px;
+  max-height: 500px;
+  min-height: 340px;
+
   border: 1px solid #eee;
+  background: linear-gradient(#eee,#fff,#ccc);
   margin-bottom: 20px;
 }
 

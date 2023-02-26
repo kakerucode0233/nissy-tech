@@ -5,13 +5,16 @@
       src="assets/models/model-animation.glb" 
       camera-controls 
       enable-pan
-      exposure = 0.7
+      exposure = "0.7"
+      shadow-intensity="1"
+      shadow-softness = "0.5"
+      camera-orbit="-30deg 60deg"
       touch-action = none
       class="model-viewer">
 
       <button v-for="(animationButton, animationIndex) in animationButtons" :key="`animation-button${animationIndex}`" :slot="`hotspot-animation-button${animationIndex}`" @click="playAnimationByIndex(animationIndex)" :data-position="`${animationButton.translation[0]} ${animationButton.translation[1]} ${animationButton.translation[2]}`" data-normal="0 0 1" class="animation-button" :style="`display: ${animationButtonVisibility ? 'block':'none'}`"></button>
     </model-viewer>
-    <div>
+    <div class="introduction-detail">
       <h3 class="introduction-detail-title">操作説明</h3>
       <ul class="introduction-detail-text">
         <li>
@@ -110,33 +113,6 @@ export default {
   100%{
     transform: scale(1, 1);
   }
-}
-
-.introduction-top-wrapper{
-  display: flex;
-  column-gap: 80px;
-  padding-bottom: 20px;
-  margin-bottom: 40px;
-  border-bottom: 10px solid #ddd;
-}
-
-.introduction-detail-title{
-  margin-bottom: 10px;
-}
-
-.introduction-detail-text{
-  width: 450px;
-  display: flex;
-  flex-direction: column;
-  row-gap: 10px;
-}
-
-.model-viewer{
-  position: relative;
-  width: 400px;
-  height: 400px;
-  border: 1px solid #eee;
-  margin-bottom: 20px;
 }
 
 .animation-button{

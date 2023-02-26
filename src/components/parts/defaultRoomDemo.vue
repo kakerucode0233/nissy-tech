@@ -5,13 +5,15 @@
       src="assets/models/room.glb" 
       camera-controls 
       enable-pan
-      exposure = 0.7
+      exposure = "0.7"
+      shadow-intensity="1"
+      shadow-softness = "0.5"
       touch-action = none
       camera-target="0.7m 1m -0.5m"
       camera-orbit="60deg 70deg 90%"
       class="model-viewer">
     </model-viewer>
-    <div>
+    <div class="introduction-detail">
       <h3 class="introduction-detail-title">部屋を丸ごと表示することも可能！</h3>
       <ul class="introduction-detail-text">
         <li>
@@ -46,32 +48,3 @@ export default {
   }
 }
 </script>
-
-<style>
-.introduction-top-wrapper{
-  display: flex;
-  column-gap: 80px;
-  padding-bottom: 20px;
-  margin-bottom: 40px;
-  border-bottom: 10px solid #ddd;
-}
-
-.introduction-detail-title{
-  margin-bottom: 10px;
-}
-
-.introduction-detail-text{
-  width: 450px;
-  display: flex;
-  flex-direction: column;
-  row-gap: 10px;
-}
-
-.model-viewer{
-  position: relative;
-  width: 400px;
-  height: 400px;
-  border: 1px solid #eee;
-  margin-bottom: 20px;
-}
-</style>

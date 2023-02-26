@@ -4,7 +4,10 @@
       id="turn-table-demo"
       src="assets/models/model.glb"
       auto-rotate
-      exposure = 0.7
+      camera-orbit="-30deg 60deg"
+      exposure = "0.7"
+      shadow-intensity="1"
+      shadow-softness = "0.5"
       :rotation-per-second = "rotateSpeed * Math.PI + 'rad'"
       class="model-viewer">
       <div class="model-viewer-rotation-range-bar">
@@ -12,7 +15,7 @@
         <input v-model="rotateSpeed" type="range" min="-1.2" max="1.2" step="0.01"/>
       </div>
     </model-viewer>
-    <div>
+    <div class="introduction-detail">
       <h3 class="introduction-detail-title">ターンテーブル</h3>
       <ul class="introduction-detail-text">
         <li>
@@ -53,33 +56,6 @@ export default {
 </script>
 
 <style>
-.introduction-top-wrapper{
-  display: flex;
-  column-gap: 80px;
-  padding-bottom: 20px;
-  margin-bottom: 40px;
-  border-bottom: 10px solid #ddd;
-}
-
-.introduction-detail-title{
-  margin-bottom: 10px;
-}
-
-.introduction-detail-text{
-  width: 450px;
-  display: flex;
-  flex-direction: column;
-  row-gap: 10px;
-}
-
-.model-viewer{
-  position: relative;
-  width: 400px;
-  height: 400px;
-  border: 1px solid #eee;
-  margin-bottom: 20px;
-}
-
 .range-bar-text{
   width: 135px;
 }
