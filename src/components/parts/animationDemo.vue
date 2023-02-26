@@ -53,7 +53,6 @@ export default {
           this.animationButtonVisibility = true;
         }
       })
-      console.log(this.animationButtons)
     },
     getAnimationButtons(modelViewer){
       modelViewer.originalGltfJson.nodes.forEach((node) => {
