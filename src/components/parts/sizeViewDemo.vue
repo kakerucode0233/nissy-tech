@@ -1,11 +1,13 @@
 <template>
   <div class="introduction-top-wrapper">
     <model-viewer
+      :key="selectedModel"
       id="size-view-demo" 
       :src="selectedModel" 
       camera-controls 
       enable-pan
       exposure = 0.7
+      camera-orbit="-30deg 60deg"
       touch-action = none
       class="model-viewer">
       <button v-for="(endPoint, index) in endPoints" :key="`end-point${index}`" :slot="`hotspot-end-point${endPoint.slot}`" class="end-point" :data-normal="endPoint.dataNormal" :style="`display: ${annotationVisibility ? 'block':'none'}`"></button>
@@ -20,7 +22,7 @@
         <select v-model="selectedModel">
           <option disabled value="">3Dモデル</option>
           <option v-for="model in models" :key="model.id" :value="model.name">
-            {{ model.name }}
+            {{ model.skuCode }}
           </option>
         </select>
       </div>
@@ -39,12 +41,6 @@
 <script>
 import { loadModelViewer } from '@/components/lib/modelViewer';
 
-const modelCenter = {
-  x: 0,
-  y: 0.35,
-  z: 0,
-};
-
 export default {
   name: 'sizeViewDemo',
   data(){
@@ -53,14 +49,17 @@ export default {
         {
           id: 0,
           name: 'assets/models/model.glb',
+          skuCode: '3HWFL_LXMS8V',
         },
         {
           id: 1,
           name: 'assets/models/model2.glb',
+          skuCode: 'F201_G1036_1000P1',
         },
         {
           id: 2,
           name: 'assets/models/model3.glb',
+          skuCode: 'F402_G1027_1000W1',
         },
       ],
       selectedModel: 'assets/models/model.glb',
@@ -118,8 +117,23 @@ export default {
   },
 
   watch:{
-    selectedModel(){
-      this.updateModelViewer();
+    async selectedModel(){
+      this.annotationVisibility = false;
+
+      const sleep = (sleepTime) => new Promise((resolve) => setTimeout(resolve, sleepTime));
+      await sleep(500);
+
+      const modelViewer = document.querySelector('#size-view-demo');
+      this.modelViewerObj = modelViewer;
+      this.updateSizeHotspot(this.modelViewerObj);
+
+      this.annotationVisibility = true;
+    },
+  },
+  computed:{
+    modelCenter(){
+      // NOTE:本来はgetBoundingBoxCenter()を使用するがnpmでは未対応なので、getCameraTarget()で代替
+      return this.modelViewerObj.getCameraTarget();
     }
   },
   async mounted() {
@@ -139,9 +153,6 @@ export default {
         }
       })
     },
-    updateModelViewer(){
-      this.updateSizeHotspot(this.modelViewerObj);
-    },
     updateSizeHotspot(modelViewer){
       const modelSize = modelViewer.getDimensions();
       const halfSizeX = modelSize.x / 2;
@@ -156,57 +167,57 @@ export default {
       
       modelViewer.updateHotspot({
         name: 'hotspot-end-point+X-Y+Z',
-        position: `${modelCenter.x + halfSizeX} ${modelCenter.y - halfSizeY} ${modelCenter.z + halfSizeZ}`
+        position: `${this.modelCenter.x + halfSizeX} ${this.modelCenter.y - halfSizeY} ${this.modelCenter.z + halfSizeZ}`
       });
 
       modelViewer.updateHotspot({
         name: 'hotspot-size-panel+X-Y',
-        position: `${modelCenter.x + halfSizeX * 1.2} ${modelCenter.y - halfSizeY * 1.1} ${modelCenter.z}`
+        position: `${this.modelCenter.x + halfSizeX * 1.2} ${this.modelCenter.y - halfSizeY * 1.1} ${this.modelCenter.z}`
       });
 
       modelViewer.updateHotspot({
         name: 'hotspot-end-point+X-Y-Z',
-        position: `${modelCenter.x + halfSizeX} ${modelCenter.y - halfSizeY} ${modelCenter.z - halfSizeZ}`
+        position: `${this.modelCenter.x + halfSizeX} ${this.modelCenter.y - halfSizeY} ${this.modelCenter.z - halfSizeZ}`
       });
 
       modelViewer.updateHotspot({
         name: 'hotspot-size-panel+X-Z',
-        position: `${modelCenter.x + halfSizeX * 1.2} ${modelCenter.y} ${modelCenter.z - halfSizeZ * 1.2}`
+        position: `${this.modelCenter.x + halfSizeX * 1.2} ${this.modelCenter.y} ${this.modelCenter.z - halfSizeZ * 1.2}`
       });
 
       modelViewer.updateHotspot({
         name: 'hotspot-end-point+X+Y-Z',
-        position: `${modelCenter.x + halfSizeX} ${modelCenter.y + halfSizeY} ${modelCenter.z - halfSizeZ}`
+        position: `${this.modelCenter.x + halfSizeX} ${this.modelCenter.y + halfSizeY} ${this.modelCenter.z - halfSizeZ}`
       });
 
       modelViewer.updateHotspot({
         name: 'hotspot-size-panel+Y-Z',
-        position: `${modelCenter.x} ${modelCenter.y + halfSizeY * 1.1} ${modelCenter.z - halfSizeZ * 1.1}`
+        position: `${this.modelCenter.x} ${this.modelCenter.y + halfSizeY * 1.1} ${this.modelCenter.z - halfSizeZ * 1.1}`
       });
 
       modelViewer.updateHotspot({
         name: 'hotspot-end-point-X+Y-Z',
-        position: `${modelCenter.x - halfSizeX} ${modelCenter.y + halfSizeY} ${modelCenter.z - halfSizeZ}`
+        position: `${this.modelCenter.x - halfSizeX} ${this.modelCenter.y + halfSizeY} ${this.modelCenter.z - halfSizeZ}`
       });
 
       modelViewer.updateHotspot({
         name: 'hotspot-size-panel-X-Z',
-        position: `${modelCenter.x - halfSizeX * 1.2} ${modelCenter.y} ${modelCenter.z - halfSizeZ * 1.2}`
+        position: `${this.modelCenter.x - halfSizeX * 1.2} ${this.modelCenter.y} ${this.modelCenter.z - halfSizeZ * 1.2}`
       });
 
       modelViewer.updateHotspot({
         name: 'hotspot-end-point-X-Y-Z',
-        position: `${modelCenter.x - halfSizeX} ${modelCenter.y - halfSizeY} ${modelCenter.z - halfSizeZ}`
+        position: `${this.modelCenter.x - halfSizeX} ${this.modelCenter.y - halfSizeY} ${this.modelCenter.z - halfSizeZ}`
       });
 
       modelViewer.updateHotspot({
         name: 'hotspot-size-panel-X-Y',
-        position: `${modelCenter.x - halfSizeX * 1.2} ${modelCenter.y - halfSizeY * 1.1} ${modelCenter.z}`
+        position: `${this.modelCenter.x - halfSizeX * 1.2} ${this.modelCenter.y - halfSizeY * 1.1} ${this.modelCenter.z}`
       });
 
       modelViewer.updateHotspot({
         name: 'hotspot-end-point-X-Y+Z',
-        position: `${modelCenter.x - halfSizeX} ${modelCenter.y - halfSizeY} ${modelCenter.z + halfSizeZ}`
+        position: `${this.modelCenter.x - halfSizeX} ${this.modelCenter.y - halfSizeY} ${this.modelCenter.z + halfSizeZ}`
       });
     }
   }
