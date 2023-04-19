@@ -12,7 +12,7 @@
       <sizeViewDemo></sizeViewDemo>
       <animationDemo></animationDemo>
       <functionalityAnimation></functionalityAnimation>
-
+      <addPropsDemo></addPropsDemo>
     </section>
   </div>
 </template>
@@ -26,6 +26,7 @@ import annotationDemo from '@/components/parts/annotationDemo.vue';
 import sizeViewDemo from '@/components/parts/sizeViewDemo.vue';
 import animationDemo from '@/components/parts/animationDemo.vue';
 import functionalityAnimation from '@/components/parts/functionalityAnimation.vue';
+import addPropsDemo from '@/components/parts/addPropsDemo.vue';
 
 export default {
   name: 'ModelViewerDemo',
@@ -38,6 +39,7 @@ export default {
     sizeViewDemo,
     animationDemo,
     functionalityAnimation,
+    addPropsDemo,
   },
 }
 </script>

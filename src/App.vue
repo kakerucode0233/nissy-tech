@@ -2,7 +2,8 @@
   <div id="app" class="home-wrapper">
     <nav class="home-nav">
       <router-link to="/">ホーム</router-link>
-      <router-link to="/model-viewer/demo">グリグリ</router-link>
+      <router-link to="/model-viewer/demo">グリグリ (model-viewer)</router-link>
+      <router-link to="/babylonjs/demo">グリグリ (babylonjs)</router-link>
       <router-link to="/model-viewer/heat-map-3d">ヒートマップ</router-link>
     </nav>
     <router-view class="contents"/>

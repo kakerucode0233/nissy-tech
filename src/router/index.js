@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import HomeView from '../views/Home/HomeView.vue'
 import HeatMap3d from '../views/ModelViewer/HeatMap3d.vue'
 import ModelViewerDemo from '../views/ModelViewer/ModelViewerDemo.vue'
+import BabylonjsDemo from '../views/ModelViewer/BabylonjsDemo.vue'
 
 Vue.use(VueRouter)
 
@@ -21,6 +22,11 @@ const routes = [
     path: '/model-viewer/demo',
     name: 'model-viewer.demo',
     component: ModelViewerDemo,
+  },
+  {
+    path: '/babylonjs/demo',
+    name: 'babylonjs.demo',
+    component: BabylonjsDemo,
   },
 ]
 

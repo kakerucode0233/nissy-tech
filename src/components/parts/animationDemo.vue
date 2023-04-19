@@ -46,6 +46,7 @@ export default {
       const modelViewer = document.querySelector('#animation-demo');
       modelViewer.addEventListener('load', () => {
         this.modelViewerObj = modelViewer;
+        modelViewer.animationLoop = false;
         this.tryGetAnimationButtons(this.modelViewerObj);
       })
     },
@@ -82,19 +83,19 @@ export default {
       })
     },
     async playAnimation(animationIndex, modelViewer){
-      const sleep = (sleepTime) => new Promise((resolve) => setTimeout(resolve, sleepTime));
+      // const sleep = (sleepTime) => new Promise((resolve) => setTimeout(resolve, sleepTime));
       
       modelViewer.animationName = modelViewer.availableAnimations[animationIndex];
-      const animationTime = modelViewer.duration * 1000 / 2;
-      modelViewer.timeScale = 1;
-      modelViewer.currentTime = 0;
+      // const animationTime = modelViewer.duration * 1000 / 2;
+      // modelViewer.timeScale = 1;
+      // modelViewer.currentTime = 0;
 
-      await sleep(100);
+      // await sleep(100);
 
       modelViewer.play();
 
-      await sleep(animationTime);
-      modelViewer.pause();
+      // await sleep(animationTime);
+      // modelViewer.pause();
     },
   }
 }

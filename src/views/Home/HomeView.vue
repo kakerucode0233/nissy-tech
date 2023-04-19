@@ -28,8 +28,15 @@ export default {
           key: 'model-viewer-demo',
           to: '/model-viewer/demo',
           thumbnail: 'assets/images/thumbnail-model-viewer.jpg',
-          title: '3D家具グリグリ',
+          title: '3D家具グリグリ (model-viewer)',
           detail: 'お客さんが家具を360度自由に見られる技術を紹介！\n購買意欲を搔き立てること間違いなし！',
+        },
+        {
+          key: 'babylonjs-demo',
+          to: '/babylonjs/demo',
+          thumbnail: 'assets/images/thumbnail-model-viewer.jpg',
+          title: '3D家具グリグリ (babylon.js)',
+          detail: 'お客さんが家具のどこを注目しているか分析するための技術を紹介！\n商品開発の助けになるかも？',
         },
         {
           key: 'heat-map-3d',
@@ -37,7 +44,8 @@ export default {
           thumbnail: 'assets/images/thumbnail-heat-map-3d.jpg',
           title: 'グリグリを使った3Dヒートマップ',
           detail: 'お客さんが家具のどこを注目しているか分析するための技術を紹介！\n商品開発の助けになるかも？',
-        }
+        },
+        
       ]
     }
   }
