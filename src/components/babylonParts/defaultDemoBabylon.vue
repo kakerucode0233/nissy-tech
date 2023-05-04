@@ -9,6 +9,7 @@ import 'babylonjs-loaders';
 import * as CANNON from 'cannon';
 import 'babylonjs-serializers';
 import '@babylonjs/core/Physics/physicsEngineComponent';
+// import { ShadowGenerator } from 'babylonjs';
 
 // Cannon.jsを定義する
 window.CANNON = CANNON;
@@ -38,6 +39,9 @@ export default {
         this.engine = new BABYLON.Engine(this.canvas, true);
         // Create a scene
         this.scene = new BABYLON.Scene(this.engine);
+
+        // 背景色の変更
+        this.scene.clearColor = new BABYLON.Color3(0.94, 0.95, 0.94);
         
         this.physicsPlugin = new BABYLON.CannonJSPlugin();
         this.scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0));
@@ -47,71 +51,47 @@ export default {
         camera.attachControl(this.canvas, true);
   
         // Create a light
-        new BABYLON.HemisphericLight('light', new BABYLON.Vector3(0, 1, 0), this.scene);
+        // const hemisphericLight = new BABYLON.HemisphericLight('light', new BABYLON.Vector3(-1, 1, 0), this.scene);
+        const hemisphericLight = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(-1, -2, -1), this.scene);
 
-        BABYLON.SceneLoader.Append(
-          'assets/models/',
-          'model3.glb',
-          this.scene, (newMeshes)=>{
+        // 地面の作成
+        this.ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 1000, height: 1000 }, this.scene);
+        this.ground.receiveShadows = true;
+        
+        BABYLON.SceneLoader.ImportMeshAsync("", "assets/models/", "model3.glb",this.scene);
+        // const shadowGen = new ShadowGenerator(1024, hemisphericLight);
+        hemisphericLight.shadowEnabled = true;
+        // shadowGen.addShadowCaster(this.ground);
 
-            console.log(newMeshes[5])
-          }
-          );
-          // const mesh = meshes[0];
-          // const boundingBox = mesh.getBoundingInfo().boundingBox;
-          // const size = boundingBox.maximum.subtract(boundingBox.minimum);
-          // const box = BABYLON.MeshBuilder.CreateBox("box", { height: size.y, width: size.x, depth: size.z }, this.scene);
-          // const options = { mass: 1, friction: 0.4, restitution: 0.3 };
-          // mesh.physicsImpostor = new BABYLON.PhysicsImpostor(mesh, BABYLON.PhysicsImpostor.BoxImpostor, options, this.scene);
-          // box.physicsImpostor = new BABYLON.PhysicsImpostor(box, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0 }, this.scene);
-          // box.parent = mesh;
-
-        this.ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 10, height: 10 }, this.scene);
-        this.ground.physicsImpostor = new BABYLON.PhysicsImpostor(this.ground, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, friction: 1, restitution: 0.5 }, this.scene);
-
-        this.scene.onPointerDown = (event, pickResult) => {
-          if (pickResult.hit) {
-            const box = BABYLON.MeshBuilder.CreateBox('box', { size: 0.2 }, this.scene);
-            box.position = pickResult.pickedPoint;
-            box.position.y += 0.3;
-            box.physicsImpostor = new BABYLON.PhysicsImpostor(box, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1, friction: 1, restitution: 0.5 }, this.scene);
-            this.objects.push(box);
-          }
-        };
+        // furniture.map((mesh)=>{
+        //   mesh.receiveShadows = true;
+        //   shadowGen.addShadowCaster(mesh);
+        // })
 
         // Start the engine
         this.engine.runRenderLoop(() => {
           this.scene.render();
         });
 
-        // this.addClickListener();
+        this.addClickListener();
       })
     },
-    addClickListener() {
-      this.canvas.addEventListener("click", (event) => {
-        const pickResult = this.scene.pick(event.offsetX, event.offsetY);
-        if (pickResult.hit) {
-          const box = BABYLON.MeshBuilder.CreateBox('box', { size: 0.2 }, this.scene);
-          box.position = pickResult.pickedPoint;
-          box.physicsImpostor = new BABYLON.PhysicsImpostor(box, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1, friction: 1, restitution: 0.5 }, this.scene);
-          this.objects.push(box);
-          // const box = BABYLON.MeshBuilder.CreateBox('box', { size: 0.2 }, this.scene);
-          // box.position = pickResult.pickedPoint;
-          // box.position.y += 0.3;
-          // const boxImpostor = new BABYLON.PhysicsImpostor(box, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1, friction: 0.5, restitution: 0.2 }, this.scene);
-          // // 立方体と床の衝突時の動作を定義する
-          // boxImpostor.registerOnPhysicsCollide(this.groundImpostor, () => {
-          //     console.log("Box collided with ground");
-          //     // 立方体が床に衝突した場合、反発するようにする
-          //     boxImpostor.setLinearVelocity(boxImpostor.getLinearVelocity().scale(-1));
-          // });
-
-        }
-        else{
-          console.log('no hit!')
-        }
-      });
+    addClickListener(){
+      this.canvas.addEventListener('click', (event) => this.addProps(event));
     },
+    addProps(event){
+      const pickResult = this.scene.pick(event.offsetX, event.offsetY);
+        if (pickResult.hit) {
+          const normal = pickResult.getNormal();
+          if(normal.y === 1){
+            const box = BABYLON.MeshBuilder.CreateBox('box', { size: 0.1 }, this.scene);
+            box.position = pickResult.pickedPoint;
+            box.position.y += 0.05;
+            box.physicsImpostor = new BABYLON.PhysicsImpostor(box, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 0, friction: 1, restitution: 0.5 }, this.scene);
+            this.objects.push(box);
+          }
+        }
+    }
   },
   beforeDestroy() {
     this.engine.dispose();
