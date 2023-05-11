@@ -58,7 +58,15 @@ export default {
         this.ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 1000, height: 1000 }, this.scene);
         this.ground.receiveShadows = true;
         
-        BABYLON.SceneLoader.ImportMeshAsync("", "assets/models/", "model3.glb",this.scene);
+        // BABYLON.SceneLoader.ImportMeshAsync("", "assets/models/", "model3.glb",this.scene);
+
+        BABYLON.SceneLoader.ImportMeshAsync("", "assets/models/", "model3.glb").then((models)=>{
+          const boundingBox = models.meshes[1].getBoundingInfo().boundingBox;
+          const modelSize = boundingBox.maximum.subtract(boundingBox.minimum);
+
+          this.createModelCollision(modelSize);
+        });
+
         // const shadowGen = new ShadowGenerator(1024, hemisphericLight);
         hemisphericLight.shadowEnabled = true;
         // shadowGen.addShadowCaster(this.ground);
@@ -76,6 +84,11 @@ export default {
         this.addClickListener();
       })
     },
+    createModelCollision(modelSize){
+      const boxSize = new BABYLON.Vector3(modelSize.x, modelSize.y, modelSize.z);
+      console.log(boxSize)
+      BABYLON.MeshBuilder.CreateBox('box', {size: 1})
+    },
     addClickListener(){
       this.canvas.addEventListener('click', (event) => this.addProps(event));
     },
@@ -91,7 +104,7 @@ export default {
             this.objects.push(box);
           }
         }
-    }
+    },
   },
   beforeDestroy() {
     this.engine.dispose();
