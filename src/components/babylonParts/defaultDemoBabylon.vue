@@ -6,13 +6,6 @@
 import * as BABYLON from 'babylonjs';
 import 'babylonjs-materials';
 import 'babylonjs-loaders';
-import * as CANNON from 'cannon';
-import 'babylonjs-serializers';
-import '@babylonjs/core/Physics/physicsEngineComponent';
-// import { ShadowGenerator } from 'babylonjs';
-
-// Cannon.jsを定義する
-window.CANNON = CANNON;
 
 export default {
   name: 'defaultDemoBabylon',
@@ -22,51 +15,20 @@ export default {
       scene: null,
       engine: null,
       camera: null,
+      isUpperPositionCamera: true,
       furnitureModels: null,
       furnitureMesh: null,
       furnitureMeshes: [],
       furnitureShadowMesh: null,
       props: null,
       objects: [],
-      // isActiveCanvas: false,
     }
   },
   mounted(){
-    this.initScrollHandle();
-    this.initScene();
+    this.createScene();
   },
-  // watch: {
-  //   isActiveCanvas(val){
-  //     if(val){
-  //       document.addEventListener('touchmove', this.handle, { passive: false });
-  //       document.addEventListener('mousewheel', this.handle, { passive: false });
-  //       this.camera.attachControl(this.canvas, true);
-  //       this.camera.inputs.attached.mousewheel.detachControl();
-  //       this.cameraZoomSettings();
-  //     }else{
-  //       document.removeEventListener('touchmove', this.handle, { passive: false });
-  //       document.removeEventListener('mousewheel', this.handle, { passive: false });
-  //       this.camera.detachControl(this.canvas);
-  //       this.cameraZoomSettings();
-  //     }
-  //   }
-  // },
   methods: {
-    handle(event){
-      event.preventDefault();
-    },
-    initScrollHandle(){
-      window.onload = function() {
-        document.addEventListener('touchmove', this.handle, { passive: false });
-        document.addEventListener('mousewheel', this.handle, { passive: false });
-      }
-    },
-    initScene(){
-      // キャンバスのフォーカス状態を監視
-      // document.addEventListener('click', (el)=> {
-      //   this.isActiveCanvas = el.target.id === 'canvas';
-      // });
-
+    createScene(){
       window.addEventListener('load', ()=>{
 
         // Create Babylon.js canvas
@@ -75,133 +37,130 @@ export default {
         // Create a scene
         this.scene = new BABYLON.Scene(this.engine);
 
-        // 背景色の変更
-        this.scene.clearColor = new BABYLON.Color3(0.94, 0.95, 0.94);
+        // Change background color
+        this.scene.clearColor = new BABYLON.Color3(0.96, 0.95, 0.94);
   
         // Create a camera
         this.camera = new BABYLON.ArcRotateCamera('Camera', Math.PI / 2, Math.PI / 2, 2, new BABYLON.Vector3(0, 0.8, 0.1), this.scene);
-        
-        this.camera.target = new BABYLON.Vector3(0, 0, 0);
-        this.camera.speed = 0.2;
+        this.cameraSettings(this.camera);
         this.camera.attachControl(this.canvas, true);
-        this.camera.inputs.attached.mousewheel.detachControl();
-
-        // カメラのY座標が変わった時の処理
-        let isUpperPositionCamera = true;
-        this.camera.onAfterCheckInputsObservable.add(()=>{
-          if(this.camera.position.y < 0 && isUpperPositionCamera){
-            isUpperPositionCamera = false;
-            this.setIsVisibleFurnitureShadow(false);
-          }
-          else if(this.camera.position.y >= 0 && !isUpperPositionCamera){
-            isUpperPositionCamera = true;
-            this.setIsVisibleFurnitureShadow(true);
-          }
-        })
-
+        
         // Create a light
         const hemisphericLight = new BABYLON.HemisphericLight('hemisphericLight', new BABYLON.Vector3(-1, 2, 0), this.scene);
         hemisphericLight.intensity = 0.8;
 
-        // Create a custom mesh
+        // Create a furniture and dummy furniture shadow
         BABYLON.SceneLoader.ImportMeshAsync("", "assets/models/", "model3.glb").then((models)=>{
           const meshes = models.meshes;
           this.furnitureMesh = meshes[1];
-          this.createFurnitureShadow();
+          this.createDummyFurnitureShadow();
         });
 
-        // Start the engine
+        // Start the rendering
         this.engine.runRenderLoop(() => {
           this.scene.render();
         });
 
-        this.addClickListener();
+        this.canvas.addEventListener('click', (event) => this.tryAddProps(event));
       })
     },
-    cameraZoomSettings(){
-      const observer = this.scene.onPointerObservable.add((pointerEvt) => this.hoge(pointerEvt), BABYLON.PointerEventTypes.POINTERWHEEL);
-      // if(isAbleControl){
-      //   observer
-      // }else{
-      //   this.scene.onPointerObservable.remove((pointerEvt) => this.hoge(pointerEvt), BABYLON.PointerEventTypes.POINTERWHEEL);
-      // }
-      observer
+
+    cameraSettings(camera){
+      camera.target = new BABYLON.Vector3(0, 0, 0);
+      camera.wheelPrecision = 50;
+      camera.pinchPrecision = 700;
+      camera.panningSensibility = 1000;
+      camera.allowUpsideDown = false;
+      camera.lowerRadiusLimit = 0.01;
+      camera.minZ = 0.030;
+      camera.useNaturalPinchZoom = true;
+      camera.panningInertia = 0.5
+      camera.inputs.attached.mousewheel.detachControl();
+
+      // TODO:PCの場合はスクロール干渉のコード追加が必要
+      // this.scene.onPointerObservable.add((pointerEvt) => {
+      //   camera.fov -= pointerEvt.event.wheelDelta * 0.0008;
+      //   camera.fov = Math.max(0.5, camera.fov);
+      //   camera.fov = Math.min(2, camera.fov)
+      // }, BABYLON.PointerEventTypes.POINTERWHEEL);
     },
-    hoge(pointerEvt){
-      this.camera.fov -= pointerEvt.event.wheelDelta * 0.0008;
-      this.camera.fov = Math.max(0.5, this.camera.fov);
-      this.camera.fov = Math.min(2, this.camera.fov)
-    },
-    createFurnitureShadow(){
-      // 家具のダミーの影をメッシュとして作成
+
+    createDummyFurnitureShadow(){
+      //家具の大きさを取得
       const furnitureBoundingBox = this.furnitureMesh.getBoundingInfo().boundingBox;
       const furnitureSize = furnitureBoundingBox.maximum.subtract(furnitureBoundingBox.minimum);
-      const meshPosition = {
+      //家具の位置を取得
+      const furniturePosition = {
         x: this.furnitureMesh.position.x,
         y: 0,
         z: this.furnitureMesh.position.z
       };
-      this.furnitureShadowMesh = BABYLON.MeshBuilder.CreateBox('box', {width: furnitureSize.x, depth: furnitureSize.z, height: 0.001}, this.scene)
-      this.furnitureShadowMesh.position.x = meshPosition.x;
-      this.furnitureShadowMesh.position.y = meshPosition.y;
-      this.furnitureShadowMesh.position.z = meshPosition.z;
+      // 家具のダミー影をメッシュとして作成し、家具の真下に配置
+      this.furnitureShadowMesh = BABYLON.MeshBuilder.CreateBox('furnitureShadow', {width: furnitureSize.x, depth: furnitureSize.z, height: 0.001}, this.scene)
+      this.furnitureShadowMesh.position.x = furniturePosition.x;
+      this.furnitureShadowMesh.position.y = furniturePosition.y;
+      this.furnitureShadowMesh.position.z = furniturePosition.z;
 
+      // ダミー影のマテリアルを設定
       const shadowMat = new BABYLON.PBRMaterial('pbr', this.scene);
       shadowMat.ambientColor = new BABYLON.Color3(0.5, 0.5, 0.5);
       shadowMat.alpha = 0.5;
       this.furnitureShadowMesh.material = shadowMat;
+
+      // カメラのY座標によって、ダミー影の表示/非表示を切り替える (カメラが家具の下に回り込んだ時に影が見えなくなるようにするため)
+      this.camera.onAfterCheckInputsObservable.add(()=>{
+        if(this.camera.position.y < 0 && this.isUpperPositionCamera){
+          this.isUpperPositionCamera = false;
+          this.furnitureShadowMesh.isVisible = false;
+        }
+        else if(this.camera.position.y >= 0 && !this.isUpperPositionCamera){
+          this.isUpperPositionCamera = true;
+          this.furnitureShadowMesh.isVisible = true;
+        }
+      })
     },
-    setIsVisibleFurnitureShadow(isVisible){
-      if(this.furnitureShadowMesh){
-        this.furnitureShadowMesh.isVisible = isVisible;
-      }
-    },
-    createModelCollision(modelSize){
-      const boxSize = new BABYLON.Vector3(modelSize.x, modelSize.y, modelSize.z);
-      console.log(boxSize)
-      BABYLON.MeshBuilder.CreateBox('box', {size: 1}, this.scene)
-    },
-    addClickListener(){
-      this.canvas.addEventListener('click', (event) => this.tryAddProps(event));
-    },
+
     tryAddProps(event){
       const pickResult = this.scene.pick(event.offsetX, event.offsetY);
-      if (pickResult.hit) {
-        const normal = pickResult.getNormal();
-        if(normal.y === 1){
-          this.addProps(pickResult.pickedPoint)
-        }
-      }
-    },
-    addProps(position){
-      this.props = new BABYLON.MeshBuilder.CreateBox('box', { size: 0.1 }, this.scene);
-      this.props.position = position;
-      this.props.position.y += 0.05;
+      const isHit = pickResult.hit;
 
-      // 家具モデルと干渉した場合は小物を削除する
-      if(!this.checkOverlap(this.props, this.furnitureMesh)){
-        this.props.dispose();
+      if(isHit){
+        const isNotFurnitureShadow = pickResult.pickedMesh.name !== 'furnitureShadow';
+        const isUpperNormal = pickResult.getNormal().y === 1;
+        const installable = this.installableProp(pickResult.pickedPoint);
+  
+        // ヒットしたメッシュが家具のダミー影ではない & Y法線が1 & 家具から小物がはみ出さない 場合に小物を設置
+        if (isNotFurnitureShadow && isUpperNormal && installable) this.addProps(pickResult.pickedPoint);
       }
-      else{
-        this.objects.push(this.props);
-      }
+
     },
-    checkOverlap(prop, mesh){
-      // propを置きたいmeshについて、prop設置可能な範囲を取得
-      const meshBoundingBox = mesh.getBoundingInfo().boundingBox;
-      const meshSize = meshBoundingBox.maximum.subtract(meshBoundingBox.minimum);
-      const meshPositionXZ = {
-        x:mesh.position.x,
-        z:mesh.position.z
+    installableProp(position){
+      // 小物を家具の上に置けるかどうかを判定するためのダミーのメッシュを生成
+      const dummyProps = new BABYLON.MeshBuilder.CreateBox('dummyProp', { size: 0.1 }, this.scene);
+      dummyProps.position = position;
+      dummyProps.position.y += 0.05;
+      
+      const installable = this.checkInstallable(dummyProps, this.furnitureMesh)
+
+      dummyProps.dispose();
+      return installable;
+    },
+    checkInstallable(prop, furniture){
+      const furnitureBoundingBox = furniture.getBoundingInfo().boundingBox;
+      const furnitureSize = furnitureBoundingBox.maximum.subtract(furnitureBoundingBox.minimum);
+      const furniturePositionXZ = {
+        x:furniture.position.x,
+        z:furniture.position.z
       };
-      const availablePutPropsArea = {
-        xMax: meshPositionXZ.x + meshSize.x/2,
-        xMin: meshPositionXZ.x - meshSize.x/2,
-        zMax: meshPositionXZ.z + meshSize.z/2,
-        zMin: meshPositionXZ.z - meshSize.z/2,
+      // 家具の大きさから小物の設置可能な範囲を取得
+      const installablePropsArea = {
+        xMax: furniturePositionXZ.x + furnitureSize.x/2,
+        xMin: furniturePositionXZ.x - furnitureSize.x/2,
+        zMax: furniturePositionXZ.z + furnitureSize.z/2,
+        zMin: furniturePositionXZ.z - furnitureSize.z/2,
       }
 
-      // propを設置した場合の占有範囲を計算
+      // クリック地点に小物を設置した場合の範囲を計算
       const propBoundingBox = prop.getBoundingInfo().boundingBox;
       const propSize = propBoundingBox.maximum.subtract(propBoundingBox.minimum);
       const propPositionXZ = {
@@ -215,10 +174,18 @@ export default {
         zMin: propPositionXZ.z - propSize.z/2,
       }
 
-      // meshのprop設置可能範囲内に、propの占有範囲が収まっているか否かを返す
-      const isAvailablePut = propPutAreaXZ.xMax <= availablePutPropsArea.xMax && propPutAreaXZ.xMin >= availablePutPropsArea.xMin && propPutAreaXZ.zMax <= availablePutPropsArea.zMax && propPutAreaXZ.zMin >= availablePutPropsArea.zMin 
+      // 小物の設置可能な範囲内に、小物の範囲が収まっているか否かを判定
+      return propPutAreaXZ.xMax <= installablePropsArea.xMax && propPutAreaXZ.xMin >= installablePropsArea.xMin && propPutAreaXZ.zMax <= installablePropsArea.zMax && propPutAreaXZ.zMin >= installablePropsArea.zMin 
+    },
+    addProps(position){
+      // 元の小物を削除
+      this.props?.meshes.forEach((mesh) => mesh.dispose());
 
-      return isAvailablePut
+      BABYLON.SceneLoader.ImportMeshAsync("", "assets/models/", "plant.glb").then((models)=>{
+        this.props = models;
+        this.props.meshes[0].position = position;
+        this.props.meshes[0].position.y -= 0.05
+      });
     },
   },
   beforeDestroy() {
