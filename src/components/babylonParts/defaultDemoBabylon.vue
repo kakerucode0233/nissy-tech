@@ -22,39 +22,35 @@ export default {
       scene: null,
       engine: null,
       camera: null,
-      ground: null,
-      groundImpostor: null,
-      physicsPlugin: null,
       furnitureModels: null,
       furnitureMesh: null,
       furnitureMeshes: [],
       furnitureShadowMesh: null,
       props: null,
       objects: [],
-      shadowGen: null,
-      isActiveCanvas: false,
+      // isActiveCanvas: false,
     }
   },
   mounted(){
     this.initScrollHandle();
     this.initScene();
   },
-  watch: {
-    isActiveCanvas(val){
-      if(val){
-        document.addEventListener('touchmove', this.handle, { passive: false });
-        document.addEventListener('mousewheel', this.handle, { passive: false });
-        this.camera.attachControl(this.canvas, true);
-        this.camera.inputs.attached.mousewheel.detachControl();
-        this.cameraZoomSettings();
-      }else{
-        document.removeEventListener('touchmove', this.handle, { passive: false });
-        document.removeEventListener('mousewheel', this.handle, { passive: false });
-        this.camera.detachControl(this.canvas);
-        this.cameraZoomSettings();
-      }
-    }
-  },
+  // watch: {
+  //   isActiveCanvas(val){
+  //     if(val){
+  //       document.addEventListener('touchmove', this.handle, { passive: false });
+  //       document.addEventListener('mousewheel', this.handle, { passive: false });
+  //       this.camera.attachControl(this.canvas, true);
+  //       this.camera.inputs.attached.mousewheel.detachControl();
+  //       this.cameraZoomSettings();
+  //     }else{
+  //       document.removeEventListener('touchmove', this.handle, { passive: false });
+  //       document.removeEventListener('mousewheel', this.handle, { passive: false });
+  //       this.camera.detachControl(this.canvas);
+  //       this.cameraZoomSettings();
+  //     }
+  //   }
+  // },
   methods: {
     handle(event){
       event.preventDefault();
@@ -67,9 +63,9 @@ export default {
     },
     initScene(){
       // キャンバスのフォーカス状態を監視
-      document.addEventListener('click', (el)=> {
-        this.isActiveCanvas = el.target.id === 'canvas';
-      });
+      // document.addEventListener('click', (el)=> {
+      //   this.isActiveCanvas = el.target.id === 'canvas';
+      // });
 
       window.addEventListener('load', ()=>{
 
@@ -81,15 +77,13 @@ export default {
 
         // 背景色の変更
         this.scene.clearColor = new BABYLON.Color3(0.94, 0.95, 0.94);
-        
-        this.physicsPlugin = new BABYLON.CannonJSPlugin();
-        this.scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0));
   
         // Create a camera
         this.camera = new BABYLON.ArcRotateCamera('Camera', Math.PI / 2, Math.PI / 2, 2, new BABYLON.Vector3(0, 0.8, 0.1), this.scene);
         
         this.camera.target = new BABYLON.Vector3(0, 0, 0);
         this.camera.speed = 0.2;
+        this.camera.attachControl(this.canvas, true);
         this.camera.inputs.attached.mousewheel.detachControl();
 
         // カメラのY座標が変わった時の処理
@@ -108,17 +102,6 @@ export default {
         // Create a light
         const hemisphericLight = new BABYLON.HemisphericLight('hemisphericLight', new BABYLON.Vector3(-1, 2, 0), this.scene);
         hemisphericLight.intensity = 0.8;
-        // ライトを自由に動かせるようにギズモを付与
-        this.CreateGizmos(hemisphericLight);
-  
-        // Create a ground
-        this.ground = BABYLON.MeshBuilder.CreateGround('ground', { width: 1000, height: 1000 }, this.scene);
-        this.ground.receiveShadows = true;
-        const groundMat = new BABYLON.PBRMaterial('pbr', this.scene);
-        groundMat.roughness = 0.6;
-        groundMat.metallic = 0;
-
-        this.ground.material = groundMat;
 
         // Create a custom mesh
         BABYLON.SceneLoader.ImportMeshAsync("", "assets/models/", "model3.glb").then((models)=>{
@@ -237,27 +220,9 @@ export default {
 
       return isAvailablePut
     },
-    CreateGizmos(customLight) {
-      const lightGizmo = new BABYLON.LightGizmo();
-      lightGizmo.scaleRatio = 2;
-      lightGizmo.light = customLight;
-
-      const gizmoManager = new BABYLON.GizmoManager(this.scene);
-      gizmoManager.positionGizmoEnabled = true;
-      gizmoManager.rotationGizmoEnabled = true;
-      gizmoManager.usePointerToAttachGizmos = false;
-      gizmoManager.attachToMesh(lightGizmo.attachedMesh);
-    }
   },
   beforeDestroy() {
     this.engine.dispose();
   },
 }
 </script>
-
-<style scoped>
-canvas{
-  width: 90%;
-  height: 90%;
-}
-</style>

@@ -33,7 +33,7 @@ export default {
 }
 
 canvas{
-  width: 1000px;
-  height: 1000px;
+  width: 100%;
+  height: 90vw;
 }
 </style>
